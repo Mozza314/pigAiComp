@@ -3,6 +3,7 @@
 #include <cmath>
 #include <random>
 
+#include "discreteDistributions.hpp"
 #include "ITurnActions.hpp"
 
 class Die
@@ -11,7 +12,8 @@ class Die
 {
 private:
     std::default_random_engine mEngine;
-    std::uniform_int_distribution<int> mDist;
+    std::uniform_real_distribution<> mRand;
+    std::vector<double> mDist;
 
     std::vector<int> mRolls;
     bool mActive = true;
@@ -25,7 +27,7 @@ private:
 
     int RawRoll()
     {
-        return mDist(mEngine);
+        return 1 + SampleDiscreteDistribution(mDist, mRand(mEngine));
     }
 
 public:
@@ -34,7 +36,8 @@ public:
     Die()
     :
         mEngine(GenerateSeed()),
-        mDist(1, 6)
+        mRand(0.0, 1.0),
+        mDist(CreateRandomDiscreteDistribution(6, [&](){ return mRand(mEngine); }))
     {
     }
     
